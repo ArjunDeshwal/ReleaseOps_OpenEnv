@@ -25,7 +25,7 @@ from openenv.core import GenericEnvClient
 # ── Config ──────────────────────────────────────────────────────────────────────
 API_BASE_URL = os.getenv("API_BASE_URL", "https://router.huggingface.co/v1")
 API_KEY      = os.getenv("OPENAI_API_KEY") or os.getenv("HF_TOKEN")
-MODEL_NAME   = os.getenv("MODEL_NAME")
+MODEL_NAME   = os.getenv("MODEL_NAME", "Qwen/Qwen2.5-72B-Instruct")  # default fallback
 ENV_URL      = os.getenv("ENV_URL", "http://localhost:7860").rstrip("/")
 
 
@@ -190,7 +190,7 @@ def parse_action(text: str) -> Optional[dict]:
 
 # ── Task runner ──────────────────────────────────────────────────────────────────
 def run_task(llm: OpenAI, task_id: str) -> dict:
-    log_start(task_id, MODEL_NAME or "unknown")
+    log_start(task_id, MODEL_NAME)
     
     rewards: List[float] = []
     step = 0
