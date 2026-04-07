@@ -30,40 +30,22 @@ ENV_URL      = os.getenv("ENV_URL", "http://localhost:7860").rstrip("/")
 
 
 # ── Structured logging helpers ──────────────────────────────────────────────────
-def log_start(task_id: str, model_name: str, env_url: str):
+def log_start(task_id: str, model_name: str, benchmark: str = "releaseops"):
     """Emit [START] log with task metadata."""
-    print(json.dumps({
-        "type": "[START]",
-        "task_id": task_id,
-        "model_name": model_name,
-        "env_url": env_url,
-        "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
-    }))
+    print(f"[START] task={task_id} env={benchmark} model={model_name or 'unknown'}", flush=True)
 
 
-def log_step(task_id: str, step: int, action: dict, reward: float, done: bool):
+def log_step(step: int, action: str, reward: float, done: bool, error: Optional[str] = None):
     """Emit [STEP] log with action and reward."""
-    print(json.dumps({
-        "type": "[STEP]",
-        "task_id": task_id,
-        "step": step,
-        "action": action,
-        "reward": reward,
-        "done": done,
-        "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
-    }))
+    error_val = error if error else "null"
+    done_val = str(done).lower()
+    print(f"[STEP] step={step} action={action} reward={reward:.2f} done={done_val} error={error_val}", flush=True)
 
 
-def log_end(task_id: str, final_score: float, steps_taken: int, grader_breakdown: dict):
+def log_end(success: bool, steps: int, score: float, rewards: List[float]):
     """Emit [END] log with final results."""
-    print(json.dumps({
-        "type": "[END]",
-        "task_id": task_id,
-        "final_score": final_score,
-        "steps_taken": steps_taken,
-        "grader_breakdown": grader_breakdown,
-        "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
-    }))
+    rewards_str = ",".join(f"{r:.2f}" for r in rewards)
+    print(f"[END] success={str(success).lower()} steps={steps} score={score:.2f} rewards={rewards_str}", flush=True)
 
 TASKS       = ["easy_001", "easy_002", "medium_001", "medium_002", "hard_001", "hard_002"]
 MAX_STEPS   = 14
@@ -208,108 +190,135 @@ def parse_action(text: str) -> Optional[dict]:
 
 # ── Task runner ──────────────────────────────────────────────────────────────────
 def run_task(llm: OpenAI, task_id: str) -> dict:
-    log_start(task_id, MODEL_NAME, ENV_URL)
+    log_start(task_id, MODEL_NAME or "unknown")
+    
+    rewards: List[float] = []
+    step = 0
+    success = False
+    score = 0.0
 
-    with GenericEnvClient(base_url=ENV_URL).sync() as env:
-        result = env.reset(task_id=task_id)
-        obs = result.observation if hasattr(result, "observation") else result
-        if isinstance(obs, dict):
-            obs_dict = obs
-        else:
-            obs_dict = obs.model_dump() if hasattr(obs, "model_dump") else dict(obs)
-
-        history: List[str] = []
-        step = 0
-        last_reward = 0.0
-
-        for step in range(1, MAX_STEPS + 1):
-            done = result.done if hasattr(result, "done") else obs_dict.get("done", False)
-            if done:
-                break
-
-            response_text = ""
-            for attempt in range(4):
-                try:
-                    completion = llm.chat.completions.create(
-                        model=MODEL_NAME,
-                        messages=[
-                            {"role": "system", "content": SYSTEM_PROMPT},
-                            {"role": "user", "content": build_prompt(step, obs_dict, history)},
-                        ],
-                        temperature=TEMPERATURE,
-                        max_tokens=200,
-                    )
-                    response_text = completion.choices[0].message.content or ""
-                    break
-                except Exception as exc:
-                    msg = str(exc)
-                    if "429" in msg or "rate" in msg.lower():
-                        wait = 15 * (attempt + 1)
-                        time.sleep(wait)
-                    else:
-                        break
-
-            action = parse_action(response_text)
-            if action is None:
-                action = {"action_type": "check_policy"}
-
-            # Force submit on last step
-            if step == MAX_STEPS and action.get("action_type") != "submit_decision":
-                risks = obs_dict.get("known_risk_signals", [])
-                codes = [r["signal_id"] for r in risks] or ["INSUFFICIENT_EVIDENCE"]
-                has_high = any(r["severity"] in ("high", "critical") for r in risks)
-                action = {
-                    "action_type": "submit_decision",
-                    "final_decision": "request_changes" if has_high else "approve",
-                    "reason_codes": codes,
-                }
-
-            result = env.step(action)
+    try:
+        with GenericEnvClient(base_url=ENV_URL).sync() as env:
+            result = env.reset(task_id=task_id)
             obs = result.observation if hasattr(result, "observation") else result
-            obs_dict = obs.model_dump() if hasattr(obs, "model_dump") else (obs if isinstance(obs, dict) else dict(obs))
+            if isinstance(obs, dict):
+                obs_dict = obs
+            else:
+                obs_dict = obs.model_dump() if hasattr(obs, "model_dump") else dict(obs)
 
-            last_reward = getattr(result, 'reward', 0) or 0
-            done = getattr(result, "done", False) or obs_dict.get("done", False)
+            history: List[str] = []
+            last_reward = 0.0
 
-            # Emit structured [STEP] log
-            log_step(task_id, step, action, last_reward, done)
+            for step in range(1, MAX_STEPS + 1):
+                done = result.done if hasattr(result, "done") else obs_dict.get("done", False)
+                if done:
+                    break
 
-            history.append(
-                f"Step {step}: {action.get('action_type')}"
-                f"({action.get('section') or action.get('metric') or action.get('decision') or ''})"
-                f" -> reward {last_reward:+.2f}"
-            )
+                response_text = ""
+                for attempt in range(4):
+                    try:
+                        completion = llm.chat.completions.create(
+                            model=MODEL_NAME,
+                            messages=[
+                                {"role": "system", "content": SYSTEM_PROMPT},
+                                {"role": "user", "content": build_prompt(step, obs_dict, history)},
+                            ],
+                            temperature=TEMPERATURE,
+                            max_tokens=200,
+                        )
+                        response_text = completion.choices[0].message.content or ""
+                        break
+                    except Exception as exc:
+                        msg = str(exc)
+                        if "429" in msg or "rate" in msg.lower():
+                            wait = 15 * (attempt + 1)
+                            time.sleep(wait)
+                        else:
+                            break
 
-            if done:
-                break
+                action = parse_action(response_text)
+                if action is None:
+                    action = {"action_type": "check_policy"}
 
-    score = obs_dict.get("final_score") or 0.0
-    breakdown = obs_dict.get("grader_breakdown") or {}
+                # Force submit on last step
+                if step == MAX_STEPS and action.get("action_type") != "submit_decision":
+                    risks = obs_dict.get("known_risk_signals", [])
+                    codes = [r["signal_id"] for r in risks] or ["INSUFFICIENT_EVIDENCE"]
+                    has_high = any(r["severity"] in ("high", "critical") for r in risks)
+                    action = {
+                        "action_type": "submit_decision",
+                        "final_decision": "request_changes" if has_high else "approve",
+                        "reason_codes": codes,
+                    }
 
-    # Emit structured [END] log
-    log_end(task_id, score, step, breakdown)
+                result = env.step(action)
+                obs = result.observation if hasattr(result, "observation") else result
+                obs_dict = obs.model_dump() if hasattr(obs, "model_dump") else (obs if isinstance(obs, dict) else dict(obs))
+
+                last_reward = getattr(result, 'reward', 0) or 0
+                done = getattr(result, "done", False) or obs_dict.get("done", False)
+                
+                rewards.append(last_reward)
+
+                # Format action as string for logging
+                action_str = f"{action.get('action_type', 'unknown')}"
+                if action.get('section'):
+                    action_str += f"(section={action['section']})"
+                elif action.get('metric'):
+                    action_str += f"(metric={action['metric']})"
+                elif action.get('decision'):
+                    action_str += f"({action['decision']})"
+                elif action.get('final_decision'):
+                    action_str += f"({action['final_decision']})"
+
+                # Emit structured [STEP] log
+                log_step(step, action_str, last_reward, done, error=None)
+
+                history.append(
+                    f"Step {step}: {action.get('action_type')}"
+                    f"({action.get('section') or action.get('metric') or action.get('decision') or ''})"
+                    f" -> reward {last_reward:+.2f}"
+                )
+
+                if done:
+                    break
+
+        score = obs_dict.get("final_score") or 0.0
+        success = score >= 0.5  # Define success threshold
+
+    except Exception as e:
+        print(f"[DEBUG] Task {task_id} failed with error: {e}", flush=True)
+        success = False
+        score = 0.0
+    finally:
+        # Always emit [END] log
+        log_end(success, step, score, rewards)
 
     return {
         "task_id": task_id,
         "final_score": score,
-        "grader_breakdown": breakdown,
         "steps_taken": step,
     }
 
 
 # ── Entry point ──────────────────────────────────────────────────────────────────
 def main():
+    try:
+        llm = OpenAI(base_url=API_BASE_URL, api_key=API_KEY)
+        results = [run_task(llm, t) for t in TASKS]
 
-    llm = OpenAI(base_url=API_BASE_URL, api_key=API_KEY)
-    results = [run_task(llm, t) for t in TASKS]
-
-    print(f"\n{'='*60}\nResults\n{'='*60}")
-    total = 0.0
-    for r in results:
-        total += r["final_score"]
-        print(f"  {r['task_id']:15s}  score={r['final_score']:.3f}  steps={r['steps_taken']}")
-    print(f"  {'AVERAGE':15s}  score={total / len(results):.3f}")
-    return results
+        print(f"\n{'='*60}\nResults\n{'='*60}")
+        total = 0.0
+        for r in results:
+            total += r["final_score"]
+            print(f"  {r['task_id']:15s}  score={r['final_score']:.3f}  steps={r['steps_taken']}")
+        print(f"  {'AVERAGE':15s}  score={total / len(results):.3f}")
+        return results
+    except Exception as e:
+        print(f"[ERROR] Fatal error in main: {e}", flush=True)
+        import traceback
+        traceback.print_exc()
+        raise
 
 
 if __name__ == "__main__":
