@@ -3,7 +3,7 @@ Inference Script — ReleaseOps-Env
 
 Env vars:
     API_BASE_URL      LLM API endpoint   (default: https://router.huggingface.co/v1)
-    MODEL_NAME        Model identifier   (required)
+    MODEL_NAME        Model identifier   (set via environment)
     OPENAI_API_KEY    API key            (or HF_TOKEN)
     HF_TOKEN          API key fallback
     ENV_URL           Environment URL    (default: http://localhost:7860)
@@ -299,10 +299,6 @@ def run_task(llm: OpenAI, task_id: str) -> dict:
 
 # ── Entry point ──────────────────────────────────────────────────────────────────
 def main():
-    if not MODEL_NAME:
-        raise ValueError("MODEL_NAME env var is required")
-    if not API_KEY:
-        raise ValueError("OPENAI_API_KEY or HF_TOKEN env var is required")
 
     llm = OpenAI(base_url=API_BASE_URL, api_key=API_KEY)
     results = [run_task(llm, t) for t in TASKS]
