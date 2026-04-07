@@ -1,0 +1,77 @@
+{
+  "services": {
+    "api-gateway": {
+      "tier": "critical",
+      "owners": ["platform-team"],
+      "sla": "99.99%",
+      "current_health": "healthy",
+      "metrics": {
+        "p50_ms": 10,
+        "p95_ms": 38,
+        "p99_ms": 90,
+        "error_rate": 0.001,
+        "rps": 42000
+      }
+    },
+    "search-service": {
+      "tier": "high",
+      "owners": ["search-team"],
+      "sla": "99.9%",
+      "current_health": "healthy",
+      "metrics": {
+        "p50_ms": 80,
+        "p95_ms": 280,
+        "p99_ms": 550,
+        "error_rate": 0.003,
+        "rps": 18000
+      }
+    },
+    "catalog-service": {
+      "tier": "critical",
+      "owners": ["catalog-team"],
+      "sla": "99.95%",
+      "current_health": "healthy",
+      "metrics": {
+        "p50_ms": 25,
+        "p95_ms": 80,
+        "p99_ms": 180,
+        "error_rate": 0.002,
+        "rps": 12000
+      }
+    },
+    "recommendations-engine": {
+      "tier": "high",
+      "owners": ["ml-team"],
+      "sla": "99.5%",
+      "current_health": "healthy",
+      "metrics": {
+        "p50_ms": 200,
+        "p95_ms": 600,
+        "p99_ms": 1200,
+        "error_rate": 0.008,
+        "rps": 5000
+      }
+    },
+    "database-cluster": {
+      "tier": "critical",
+      "owners": ["data-team"],
+      "sla": "99.99%",
+      "current_health": "healthy",
+      "max_connections": 2000,
+      "current_connections": 1560,
+      "metrics": {
+        "cpu": 0.78,
+        "queue_depth": 320,
+        "p99_ms": 45,
+        "error_rate": 0.001
+      },
+      "note": "At 78% CPU capacity. Unthrottled traffic spike would exceed safe operating limits."
+    }
+  },
+  "dependencies": {
+    "api-gateway": ["search-service", "catalog-service", "recommendations-engine"],
+    "search-service": ["database-cluster"],
+    "catalog-service": ["database-cluster"],
+    "recommendations-engine": ["database-cluster"]
+  }
+}

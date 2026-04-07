@@ -1,0 +1,33 @@
+{
+  "services": {
+    "notification-service": {
+      "tier": "high",
+      "sla": "99.5%",
+      "current_health": "healthy",
+      "replicas": 8,
+      "avg_rps": 450
+    },
+    "email-worker": {
+      "tier": "medium",
+      "sla": "99.0%",
+      "current_health": "healthy",
+      "replicas": 4,
+      "avg_rps": 120
+    },
+    "sms-worker": {
+      "tier": "medium",
+      "sla": "99.0%",
+      "current_health": "healthy",
+      "replicas": 4,
+      "avg_rps": 80
+    },
+    "postgres-notifications": {
+      "tier": "critical",
+      "sla": "99.9%",
+      "current_health": "healthy",
+      "max_connections": 500,
+      "current_connections": 380,
+      "note": "Already at 76% capacity - adding 1600 connections would exceed limit"
+    }
+  }
+}

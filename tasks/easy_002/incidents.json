@@ -1,0 +1,31 @@
+{
+  "incidents": [
+    {
+      "incident_id": "INC-8821",
+      "date": "2024-11-14",
+      "service": "user-service",
+      "title": "Database connection pool exhaustion caused 15min outage",
+      "root_cause": "Increased pool size without checking DB server capacity. Hit max_connections limit.",
+      "resolution": "Emergency rollback of pool config, then proper capacity planning",
+      "similarity_to_current": 0.92
+    },
+    {
+      "incident_id": "INC-7654",
+      "date": "2024-09-03",
+      "service": "analytics-service",
+      "title": "PostgreSQL connection limit exceeded during traffic spike",
+      "root_cause": "Multiple services sharing same DB increased connections simultaneously",
+      "resolution": "Connection pooling at PgBouncer layer, enforced per-service limits",
+      "similarity_to_current": 0.78
+    },
+    {
+      "incident_id": "INC-6543",
+      "date": "2024-06-22",
+      "service": "notification-service",
+      "title": "Notification delays during marketing campaign",
+      "root_cause": "Connection pool too small, requests queued waiting for connections",
+      "resolution": "Increased pool from 10 to 20 after load testing",
+      "similarity_to_current": 0.45
+    }
+  ]
+}

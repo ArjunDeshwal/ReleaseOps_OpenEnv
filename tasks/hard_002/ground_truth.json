@@ -1,0 +1,48 @@
+{
+  "optimal_decision": "block",
+  "acceptable_decisions": ["block", "request_changes"],
+  "required_reason_codes": [
+    "missing_load_test",
+    "missing_approval_service_owner",
+    "policy_peak_traffic",
+    "policy_missing_load_test",
+    "similar_incident_INC-9201",
+    "error_rate_breach_api-gateway",
+    "p99_breach_api-gateway"
+  ],
+  "required_risk_signals": [
+    "protection_mechanism_removal",
+    "missing_load_test",
+    "missing_approval_service_owner",
+    "large_blast_radius",
+    "similar_incident_INC-9201",
+    "policy_missing_load_test",
+    "error_rate_breach_api-gateway",
+    "p99_breach_api-gateway",
+    "queue_depth_breach_database-cluster",
+    "error_rate_breach_search-service"
+  ],
+  "required_evidence": [
+    "inspected_diff",
+    "inspected_tests",
+    "inspected_approvals",
+    "inspected_dependencies",
+    "checked_incidents",
+    "checked_policy",
+    "telemetry_api-gateway_error_rate_precheck",
+    "telemetry_api-gateway_p99_precheck",
+    "telemetry_database-cluster_queue_depth_precheck",
+    "telemetry_search-service_error_rate_precheck"
+  ],
+  "acceptable_trajectories": [
+    "inspect_diff → inspect_tests → inspect_approvals → inspect_dependencies → query_telemetry(error_rate, api-gateway) → query_telemetry(p99, api-gateway) → search_incidents → check_policy → submit_decision(block)",
+    "inspect_diff → inspect_approvals → inspect_dependencies → query_telemetry(error_rate, api-gateway) → search_incidents → check_policy → submit_decision(block)"
+  ],
+  "forbidden_actions": [],
+  "max_steps": 14,
+  "difficulty": "hard",
+  "expected_score_range": {
+    "optimal_trajectory": [0.75, 0.98],
+    "weak_agent": [0.10, 0.40]
+  }
+}

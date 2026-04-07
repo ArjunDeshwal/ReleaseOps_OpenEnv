@@ -1,0 +1,22 @@
+{
+  "incidents": [
+    {
+      "incident_id": "INC-4412",
+      "date": "2024-08-19",
+      "service": "auth-service",
+      "title": "JWT key rotation caused 12-minute auth failure across all services",
+      "root_cause": "Key distributed to only 3 of 8 api-gateway instances before rollout. Remaining instances rejected new tokens.",
+      "resolution": "Completed key distribution to all instances, implemented pre-flight key-distribution check",
+      "similarity_to_current": 0.55
+    },
+    {
+      "incident_id": "INC-3301",
+      "date": "2024-02-05",
+      "service": "user-service",
+      "title": "User logout cascade during auth-service deploy",
+      "root_cause": "Token format change invalidated all active HS256 sessions immediately without grace period",
+      "resolution": "Added backward-compatible grace period for old token formats",
+      "similarity_to_current": 0.45
+    }
+  ]
+}

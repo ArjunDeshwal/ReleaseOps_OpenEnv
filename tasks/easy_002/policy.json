@@ -1,0 +1,26 @@
+{
+  "rules": [
+    {
+      "id": "POL-1",
+      "rule": "Configuration changes affecting resource limits require load testing"
+    },
+    {
+      "id": "POL-2",
+      "rule": "Database configuration changes require DBA approval"
+    },
+    {
+      "id": "POL-3",
+      "rule": "Service owner approval required for all production changes"
+    },
+    {
+      "id": "POL-4",
+      "rule": "Changes to critical-tier dependencies require capacity validation"
+    },
+    {
+      "id": "POL-5",
+      "rule": "No deployments to high-tier services during peak traffic window (09:00-17:00 UTC)"
+    }
+  ],
+  "current_time": "14:30 UTC",
+  "traffic_window": "peak"
+}

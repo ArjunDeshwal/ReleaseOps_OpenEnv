@@ -1,0 +1,35 @@
+{
+  "change_id": "PR-9102",
+  "author": "dev-carlos",
+  "description": "Increase retry attempts and queue consumer concurrency to improve order processing throughput",
+  "files_changed": [
+    "order-processor/config/retry_policy.yaml",
+    "queue-service/config/consumer_config.yaml",
+    "rate-limiter/config/limits.yaml",
+    "order-processor/src/consumer.py",
+    "order-processor/tests/test_consumer.py"
+  ],
+  "services_touched": ["order-processor", "queue-service", "rate-limiter"],
+  "blast_radius": ["payments-service", "order-processor", "queue-service", "rate-limiter"],
+  "diff_summary": "Increases queue consumer concurrency from 5 to 15 workers, retry attempts from 3 to 8 with exponential backoff (max 30s), and adjusts rate limiter burst capacity from 100 to 500 req/s. Motivation: order processing latency spikes during flash sales. Changes are config-only with no code changes to business logic.",
+  "test_results": {
+    "unit": {
+      "passed": 45,
+      "failed": 0,
+      "skipped": 2
+    },
+    "integration": {
+      "passed": 22,
+      "failed": 0,
+      "skipped": 0
+    },
+    "load_test": null
+  },
+  "approvals": {
+    "code_review": "approved",
+    "service_owner": "pending",
+    "security_review": "approved"
+  },
+  "rollback_plan": "Revert config changes via feature flag rollback — see runbook/retry-policy-rollback.md",
+  "hidden_risks": []
+}

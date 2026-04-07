@@ -1,0 +1,61 @@
+{
+  "services": {
+    "auth-service": {
+      "tier": "critical",
+      "owners": ["security-team"],
+      "sla": "99.99%",
+      "current_health": "healthy",
+      "metrics": {
+        "p50_ms": 18,
+        "p95_ms": 55,
+        "p99_ms": 120,
+        "error_rate": 0.0005,
+        "rps": 8000
+      }
+    },
+    "api-gateway": {
+      "tier": "critical",
+      "owners": ["platform-team"],
+      "sla": "99.95%",
+      "current_health": "healthy",
+      "metrics": {
+        "p50_ms": 10,
+        "p95_ms": 38,
+        "p99_ms": 95,
+        "error_rate": 0.001,
+        "rps": 20000
+      }
+    },
+    "user-service": {
+      "tier": "high",
+      "owners": ["identity-team"],
+      "sla": "99.9%",
+      "current_health": "healthy",
+      "metrics": {
+        "p50_ms": 30,
+        "p95_ms": 90,
+        "p99_ms": 200,
+        "error_rate": 0.002,
+        "rps": 5000
+      }
+    },
+    "orders-service": {
+      "tier": "critical",
+      "owners": ["commerce-team"],
+      "sla": "99.9%",
+      "current_health": "healthy",
+      "metrics": {
+        "p50_ms": 45,
+        "p95_ms": 120,
+        "p99_ms": 280,
+        "error_rate": 0.003,
+        "rps": 3500
+      }
+    }
+  },
+  "dependencies": {
+    "api-gateway": ["auth-service"],
+    "user-service": ["auth-service"],
+    "orders-service": ["auth-service", "api-gateway"]
+  }
+}

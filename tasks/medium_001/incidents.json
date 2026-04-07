@@ -1,0 +1,26 @@
+{
+  "incidents": [
+    {
+      "incident_id": "INC-4411",
+      "date": "2025-01-18",
+      "title": "Index migration without CONCURRENTLY locked orders table for 14 minutes",
+      "root_cause": "CREATE INDEX without CONCURRENTLY acquired exclusive table lock, blocking all writes on orders table during migration",
+      "services_affected": ["orders-service", "search-service"],
+      "severity": "SEV-1",
+      "resolution": "Killed migration, rewrote using CREATE INDEX CONCURRENTLY. Added DBA review gate.",
+      "similarity_to_current": 0.35,
+      "discoverable": true
+    },
+    {
+      "incident_id": "INC-2890",
+      "date": "2024-11-05",
+      "title": "Schema migration caused unexpected p99 spike during canary — caught before promotion",
+      "root_cause": "New composite index on large table triggered buffer pool thrashing during canary. Detected via telemetry monitoring before promotion.",
+      "services_affected": ["orders-service"],
+      "severity": "SEV-3",
+      "resolution": "Rolled back canary, rewrote index migration with partial index to reduce buffer pressure. Redeployed with full monitoring.",
+      "similarity_to_current": 0.55,
+      "discoverable": true
+    }
+  ]
+}

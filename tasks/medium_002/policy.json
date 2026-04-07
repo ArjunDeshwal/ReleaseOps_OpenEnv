@@ -1,0 +1,26 @@
+{
+  "rules": [
+    {
+      "id": "POL-1",
+      "rule": "Security-sensitive changes (auth, encryption, key management) require security-team approval"
+    },
+    {
+      "id": "POL-2",
+      "rule": "Changes affecting authentication or authorization require load testing under production traffic"
+    },
+    {
+      "id": "POL-3",
+      "rule": "Critical-tier service changes require service owner approval"
+    },
+    {
+      "id": "POL-4",
+      "rule": "Token format or signing algorithm changes require a backward-compatibility grace period"
+    },
+    {
+      "id": "POL-5",
+      "rule": "Key rotation must include pre-deployment verification that all dependent services have received the new public key"
+    }
+  ],
+  "current_time": "10:00 UTC",
+  "traffic_window": "normal"
+}

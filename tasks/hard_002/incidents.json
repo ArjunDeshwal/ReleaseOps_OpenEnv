@@ -1,0 +1,31 @@
+{
+  "incidents": [
+    {
+      "incident_id": "INC-9201",
+      "date": "2025-01-08",
+      "service": "api-gateway",
+      "title": "Rate limit bypass caused 45-minute database brownout during flash sale",
+      "root_cause": "Malformed request bypassed rate limiter. Database saturated at 95% CPU, query queue grew to 8000+, cascaded to catalog and search service errors",
+      "resolution": "Emergency rate limit enforcement via WAF, database connection draining",
+      "similarity_to_current": 0.88
+    },
+    {
+      "incident_id": "INC-8107",
+      "date": "2024-10-15",
+      "service": "search-service",
+      "title": "Search service timeout cascade from unthrottled crawler traffic",
+      "root_cause": "Third-party crawler ignored robots.txt, sent 200k req/min. No rate limit on search endpoint. Database overloaded.",
+      "resolution": "Emergency per-IP rate limiting deployed, crawler blocked",
+      "similarity_to_current": 0.76
+    },
+    {
+      "incident_id": "INC-7654",
+      "date": "2024-07-22",
+      "service": "catalog-service",
+      "title": "Catalog availability dropped to 87% during product launch",
+      "root_cause": "Marketing campaign drove 5x traffic spike. No rate limiting on catalog read endpoints.",
+      "resolution": "Added rate limiting at API gateway layer, CDN caching for catalog reads",
+      "similarity_to_current": 0.71
+    }
+  ]
+}

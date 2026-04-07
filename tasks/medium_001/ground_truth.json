@@ -1,0 +1,31 @@
+{
+  "optimal_decision": "approve",
+  "acceptable_decisions": ["approve"],
+  "required_reason_codes": [
+    "backward_compatible_change",
+    "all_tests_passed",
+    "all_approvals_granted"
+  ],
+  "required_risk_signals": [
+    "backward_compatible_change",
+    "all_tests_passed",
+    "all_approvals_granted"
+  ],
+  "required_evidence": [
+    "inspected_diff",
+    "inspected_tests",
+    "inspected_approvals",
+    "checked_policy"
+  ],
+  "acceptable_trajectories": [
+    "inspect_diff → inspect_tests → inspect_approvals → check_policy → submit_decision(approve)",
+    "inspect_diff → inspect_approvals → inspect_tests → check_policy → submit_decision(approve)"
+  ],
+  "forbidden_actions": [],
+  "max_steps": 12,
+  "difficulty": "medium",
+  "expected_score_range": {
+    "optimal_trajectory": [0.80, 1.00],
+    "weak_agent": [0.20, 0.50]
+  }
+}

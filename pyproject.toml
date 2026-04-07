@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "openenv-releaseops-env"
+version = "0.1.0"
+description = "Production change review and rollout governance environment for OpenEnv"
+requires-python = ">=3.10"
+dependencies = [
+    "openenv-core[core]>=0.2.1",
+    "fastapi>=0.115.0",
+    "pydantic>=2.0.0",
+    "uvicorn>=0.24.0",
+    "requests>=2.31.0",
+]
+
+[project.scripts]
+server = "server.app:main"
+
+[project.optional-dependencies]
+baseline = ["openai>=1.0.0"]
+dev = ["pytest>=8.0.0", "pytest-cov>=4.0.0", "pytest-asyncio>=0.23.0", "httpx>=0.25.0"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["releaseops_env*", "server*", "tasks*", "baseline*"]
+
+[tool.setuptools.package-data]
+"tasks" = ["**/*.json"]
+"*" = ["*.yaml", "*.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"

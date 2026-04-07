@@ -1,0 +1,34 @@
+{
+  "change_id": "PR-5521",
+  "author": "dev-bob",
+  "description": "Add synchronous audit logging to payment-service checkout hot path",
+  "files_changed": [
+    "payment-service/src/handlers/checkout.py",
+    "payment-service/src/audit/sync_logger.py",
+    "payment-service/tests/test_checkout.py"
+  ],
+  "services_touched": ["payment-service"],
+  "blast_radius": ["payment-service", "api-gateway"],
+  "diff_summary": "Adds synchronous blocking call to audit-service on every checkout transaction. Each payment now waits for audit log confirmation before returning. The audit-service p99 latency is 2000ms.",
+  "test_results": {
+    "unit": {
+      "passed": 32,
+      "failed": 0,
+      "skipped": 1
+    },
+    "integration": {
+      "passed": 8,
+      "failed": 1,
+      "skipped": 0,
+      "failures": ["test_checkout_under_load: timeout exceeded 5s on 23% of requests"]
+    },
+    "load_test": null
+  },
+  "approvals": {
+    "code_review": "approved",
+    "service_owner": "pending",
+    "security_review": "not_required"
+  },
+  "rollback_plan": null,
+  "hidden_risks": []
+}

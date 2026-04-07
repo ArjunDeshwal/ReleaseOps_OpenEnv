@@ -1,0 +1,45 @@
+{
+  "change_id": "PR-9124",
+  "author": "dev-bob",
+  "description": "Increase connection pool size for notification-service database to reduce timeouts",
+  "files_changed": [
+    "notification-service/config/database.yaml",
+    "notification-service/docs/tuning.md"
+  ],
+  "services_touched": ["notification-service"],
+  "blast_radius": ["notification-service", "postgres-notifications", "email-worker", "sms-worker"],
+  "diff_summary": "Changes database connection pool max_connections from 20 to 200. This is a 10x increase to handle growing notification volume. Config change only, no code changes. Rollback is instant (revert config). However, this significantly increases database load and may cause connection exhaustion on the PostgreSQL server.",
+  "test_results": {
+    "unit": {
+      "passed": 42,
+      "failed": 0,
+      "skipped": 0
+    },
+    "integration": {
+      "passed": 18,
+      "failed": 0,
+      "skipped": 0
+    },
+    "load_test": null
+  },
+  "approvals": {
+    "code_review": "approved",
+    "service_owner": "pending",
+    "dba": "pending"
+  },
+  "rollback_plan": "Revert config/database.yaml to max_connections=20 and restart service",
+  "hidden_risks": [
+    {
+      "risk_id": "db_connection_exhaustion",
+      "severity": "critical",
+      "summary": "10x pool increase may exhaust PostgreSQL server connections (max 500 global limit)",
+      "discoverable_via": ["inspect_services", "inspect_dependencies"]
+    },
+    {
+      "risk_id": "missing_capacity_check",
+      "severity": "high",
+      "summary": "No validation that database server can handle 200 connections per app instance × 8 instances = 1600 connections",
+      "discoverable_via": ["inspect_change", "request_artifact"]
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "rules": [
+    {
+      "id": "POL-1",
+      "rule": "Service owner approval required for all changes to critical-tier services before deploy"
+    },
+    {
+      "id": "POL-2",
+      "rule": "No deployments during peak traffic window (14:00-18:00 UTC)"
+    },
+    {
+      "id": "POL-3",
+      "rule": "Load test required for all changes increasing queue consumer concurrency by more than 2x"
+    },
+    {
+      "id": "POL-4",
+      "rule": "Canary required for changes to retry policy or queue concurrency affecting critical services"
+    },
+    {
+      "id": "POL-5",
+      "rule": "Changes to services with degraded downstream dependencies must include dependency health sign-off"
+    }
+  ],
+  "current_time": "15:45 UTC",
+  "traffic_window": "peak"
+}

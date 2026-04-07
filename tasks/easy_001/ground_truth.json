@@ -1,0 +1,33 @@
+{
+  "optimal_decision": "request_changes",
+  "acceptable_decisions": ["request_changes", "block"],
+  "required_reason_codes": [
+    "hot_path_sync_io",
+    "missing_load_test",
+    "integration_test_failure"
+  ],
+  "required_risk_signals": [
+    "hot_path_sync_io",
+    "integration_test_failure",
+    "missing_load_test",
+    "policy_peak_traffic"
+  ],
+  "required_evidence": [
+    "inspected_diff",
+    "inspected_tests",
+    "checked_policy"
+  ],
+  "acceptable_trajectories": [
+    "inspect_diff → inspect_tests → check_policy → submit_decision(request_changes)",
+    "inspect_diff → inspect_tests → inspect_approvals → check_policy → submit_decision(request_changes)"
+  ],
+  "forbidden_actions": [
+    "approve_with_missing_approval"
+  ],
+  "max_steps": 12,
+  "difficulty": "easy",
+  "expected_score_range": {
+    "optimal_trajectory": [0.85, 1.00],
+    "weak_agent": [0.45, 0.80]
+  }
+}

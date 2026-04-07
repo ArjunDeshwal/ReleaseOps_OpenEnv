@@ -1,0 +1,43 @@
+{
+  "change_id": "PR-7823",
+  "author": "dev-alice",
+  "description": "Add composite index on orders table for improved order history query performance",
+  "files_changed": [
+    "orders-service/migrations/0042_add_order_history_index.sql",
+    "orders-service/src/db/queries.py",
+    "orders-service/tests/test_order_history.py"
+  ],
+  "services_touched": [
+    "orders-service"
+  ],
+  "blast_radius": [
+    "orders-service",
+    "search-service"
+  ],
+  "diff_summary": "Adds composite index orders_hist_idx on orders(user_id, created_at) to speed up order history API queries. Migration uses CREATE INDEX CONCURRENTLY orders_hist_idx ON orders (user_id, created_at) to avoid table locks during migration. Schema change is backward-compatible \u2014 existing queries are unaffected. Estimated migration time: 2-4 minutes on 42M row table.",
+  "test_results": {
+    "unit": {
+      "passed": 38,
+      "failed": 0,
+      "skipped": 0
+    },
+    "integration": {
+      "passed": 12,
+      "failed": 0,
+      "skipped": 0
+    },
+    "load_test": {
+      "status": "passed",
+      "p99_ms": 430,
+      "error_rate": 0.002,
+      "duration_min": 3
+    }
+  },
+  "approvals": {
+    "code_review": "approved",
+    "service_owner": "approved",
+    "dba": "approved"
+  },
+  "rollback_plan": "DROP INDEX CONCURRENTLY orders_hist_idx",
+  "hidden_risks": []
+}

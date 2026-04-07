@@ -1,0 +1,40 @@
+{
+  "change_id": "PR-8441",
+  "author": "dev-priya",
+  "description": "Migrate JWT signing algorithm from HS256 to RS256 for auth-service tokens",
+  "files_changed": [
+    "auth-service/src/tokens/signer.py",
+    "auth-service/src/tokens/verifier.py",
+    "auth-service/config/jwt_config.yaml",
+    "auth-service/tests/test_token_lifecycle.py",
+    "api-gateway/src/middleware/auth_middleware.py"
+  ],
+  "services_touched": ["auth-service", "api-gateway"],
+  "blast_radius": ["auth-service", "api-gateway"],
+  "diff_summary": "Replaces HS256 (symmetric HMAC) with RS256 (asymmetric RSA) for JWT signing. New private key stored in HashiCorp Vault. Public key distributed to all verifying services via key-rotation endpoint. Rollout uses dual-signing: new tokens are RS256, old HS256 tokens accepted for 7-day grace period. No user action required.",
+  "test_results": {
+    "unit": {
+      "passed": 61,
+      "failed": 0,
+      "skipped": 0
+    },
+    "integration": {
+      "passed": 24,
+      "failed": 0,
+      "skipped": 0
+    },
+    "load_test": {
+      "status": "passed",
+      "p99_ms": 145,
+      "error_rate": 0.0008,
+      "duration_min": 10
+    }
+  },
+  "approvals": {
+    "code_review": "approved",
+    "service_owner": "approved",
+    "security_review": "approved"
+  },
+  "rollback_plan": "Revert jwt_config.yaml to HS256. HS256 verification kept active during grace period. Rollback is safe within 7-day window.",
+  "hidden_risks": []
+}

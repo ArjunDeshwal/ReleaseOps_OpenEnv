@@ -1,0 +1,33 @@
+{
+  "services": {
+    "orders-service": {
+      "tier": "critical",
+      "owners": ["orders-team"],
+      "sla": "99.95%",
+      "current_health": "healthy",
+      "metrics": {
+        "p50_ms": 120,
+        "p95_ms": 280,
+        "p99_ms": 400,
+        "error_rate": 0.002,
+        "rps": 1800
+      }
+    },
+    "search-service": {
+      "tier": "high",
+      "owners": ["search-team"],
+      "sla": "99.9%",
+      "current_health": "healthy",
+      "metrics": {
+        "p50_ms": 85,
+        "p95_ms": 210,
+        "p99_ms": 480,
+        "error_rate": 0.003,
+        "rps": 3200
+      }
+    }
+  },
+  "dependencies": {
+    "search-service": ["orders-service"]
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "incidents": [
+    {
+      "incident_id": "INC-2847",
+      "date": "2025-03-14",
+      "title": "Thundering herd caused by retry amplification after queue consumer concurrency increase",
+      "root_cause": "Consumer concurrency increased from 4 to 12 during partial downstream failure. Each consumer retried aggressively, amplifying load 3x on already-degraded payments-service. Cascaded to SEV-1.",
+      "services_affected": ["order-processor", "queue-service", "payments-service"],
+      "severity": "SEV-1",
+      "resolution": "Emergency rollback of concurrency config. Added circuit breaker and backpressure mechanism. Incident took 47 minutes to resolve.",
+      "similarity_to_current": 0.91,
+      "discoverable": true
+    },
+    {
+      "incident_id": "INC-3102",
+      "date": "2025-01-28",
+      "title": "Retry storm during peak traffic window caused SLA breach across order pipeline",
+      "root_cause": "Config change deployed during peak window increased retry fanout under flash sale load. queue depth grew 6x in 8 minutes, p99 breached SLA.",
+      "services_affected": ["order-processor", "queue-service"],
+      "severity": "SEV-2",
+      "resolution": "Rolled back config, implemented queue depth-based backpressure. Added mandatory off-peak deployment policy for retry config changes.",
+      "similarity_to_current": 0.78,
+      "discoverable": true
+    },
+    {
+      "incident_id": "INC-1944",
+      "date": "2024-09-03",
+      "title": "Missing load test on concurrency change led to capacity exhaustion in staging spillover",
+      "root_cause": "No load test performed for consumer concurrency increase. Under real production traffic, thread pool exhaustion caused cascading timeouts.",
+      "services_affected": ["order-processor"],
+      "severity": "SEV-2",
+      "resolution": "Rolled back. Load test gate added to deployment checklist for concurrency changes.",
+      "similarity_to_current": 0.65,
+      "discoverable": true
+    }
+  ]
+}

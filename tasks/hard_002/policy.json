@@ -1,0 +1,26 @@
+{
+  "rules": [
+    {
+      "id": "POL-1",
+      "rule": "All changes to rate limiting or traffic shaping require load testing and security team approval"
+    },
+    {
+      "id": "POL-2",
+      "rule": "Changes that remove protective mechanisms require canary deployment with traffic monitoring before full rollout"
+    },
+    {
+      "id": "POL-3",
+      "rule": "Critical-tier service changes require service owner approval"
+    },
+    {
+      "id": "POL-4",
+      "rule": "Changes affecting database load must include capacity analysis showing headroom above 80% utilization"
+    },
+    {
+      "id": "POL-5",
+      "rule": "Security-sensitive changes (authentication, authorization, rate limiting) require security review"
+    }
+  ],
+  "current_time": "16:45 UTC",
+  "traffic_window": "peak"
+}

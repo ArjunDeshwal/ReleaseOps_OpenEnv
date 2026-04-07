@@ -1,0 +1,30 @@
+{
+  "notification-service": {
+    "p99": {
+      "pre_canary": [45, 47, 46, 48, 45, 47],
+      "during_canary": [46, 48, 49, 50, 48, 47],
+      "after_promotion": [48, 49, 50, 51, 49],
+      "after_rollback": [45, 46, 45, 47]
+    },
+    "error_rate": {
+      "pre_canary": [0.002, 0.001, 0.002, 0.001, 0.002],
+      "during_canary": [0.002, 0.001, 0.002, 0.001],
+      "after_promotion": [0.001, 0.002, 0.001],
+      "after_rollback": [0.001, 0.002, 0.001]
+    },
+    "queue_depth": {
+      "pre_canary": [12, 15, 13, 14, 16],
+      "during_canary": [10, 8, 9, 7],
+      "after_promotion": [8, 9, 7, 8],
+      "after_rollback": [14, 15, 13]
+    }
+  },
+  "postgres-notifications": {
+    "connections": {
+      "pre_canary": [380, 385, 378, 390, 382],
+      "during_canary": [395, 420, 450, 485, 498],
+      "after_promotion": [510, 525, 540, 560],
+      "after_rollback": [380, 375, 382]
+    }
+  }
+}

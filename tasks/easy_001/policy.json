@@ -1,0 +1,26 @@
+{
+  "rules": [
+    {
+      "id": "POL-1",
+      "rule": "Changes to critical-tier services require service owner approval before deploy"
+    },
+    {
+      "id": "POL-2",
+      "rule": "Load test required for all changes to checkout or payment handlers"
+    },
+    {
+      "id": "POL-3",
+      "rule": "Failed integration tests must have documented justification before deploy"
+    },
+    {
+      "id": "POL-4",
+      "rule": "Synchronous blocking calls on hot paths (>1000 rps) are forbidden — use async patterns"
+    },
+    {
+      "id": "POL-5",
+      "rule": "No promotions during peak traffic windows (14:00-18:00 UTC)"
+    }
+  ],
+  "current_time": "15:30 UTC",
+  "traffic_window": "peak"
+}

@@ -1,0 +1,152 @@
+{
+  "agent": "heuristic_baseline",
+  "seed": "deterministic",
+  "tasks": {
+    "easy_001": {
+      "task_id": "easy_001",
+      "score": 0.771,
+      "grader_breakdown": {
+        "evidence_coverage": 1.0,
+        "reason_code_accuracy": 0.75,
+        "decision_correctness": 0.5,
+        "efficiency": 0.833,
+        "forbidden_penalty": 0.0
+      },
+      "trajectory": [
+        "inspect_change",
+        "inspect_change",
+        "inspect_change",
+        "inspect_dependencies",
+        "inspect_services:payment-service",
+        "inspect_services:api-gateway",
+        "search_incidents",
+        "check_policy",
+        "submit_decision:block"
+      ],
+      "steps": 9,
+      "cumulative_reward": 0.76
+    },
+    "easy_002": {
+      "task_id": "easy_002",
+      "score": 0.905,
+      "grader_breakdown": {
+        "evidence_coverage": 1.0,
+        "reason_code_accuracy": 0.686,
+        "decision_correctness": 1.0,
+        "efficiency": 0.833,
+        "forbidden_penalty": 0.0
+      },
+      "trajectory": [
+        "inspect_change",
+        "inspect_change",
+        "inspect_change",
+        "inspect_dependencies",
+        "inspect_services:notification-service",
+        "inspect_services:email-worker",
+        "search_incidents",
+        "check_policy",
+        "submit_decision:request_changes"
+      ],
+      "steps": 9,
+      "cumulative_reward": 0.92
+    },
+    "hard_001": {
+      "task_id": "hard_001",
+      "score": 0.622,
+      "grader_breakdown": {
+        "evidence_coverage": 1.0,
+        "reason_code_accuracy": 0.156,
+        "decision_correctness": 0.5,
+        "efficiency": 0.833,
+        "forbidden_penalty": 0.0
+      },
+      "trajectory": [
+        "inspect_change",
+        "inspect_change",
+        "inspect_change",
+        "inspect_dependencies",
+        "inspect_services:payments-service",
+        "inspect_services:order-processor",
+        "search_incidents",
+        "check_policy",
+        "submit_decision:block"
+      ],
+      "steps": 9,
+      "cumulative_reward": 1.0
+    },
+    "hard_002": {
+      "task_id": "hard_002",
+      "score": 0.867,
+      "grader_breakdown": {
+        "evidence_coverage": 1.0,
+        "reason_code_accuracy": 0.533,
+        "decision_correctness": 1.0,
+        "efficiency": 0.833,
+        "forbidden_penalty": 0.0
+      },
+      "trajectory": [
+        "inspect_change",
+        "inspect_change",
+        "inspect_change",
+        "inspect_dependencies",
+        "inspect_services:api-gateway",
+        "inspect_services:search-service",
+        "search_incidents",
+        "check_policy",
+        "submit_decision:block"
+      ],
+      "steps": 9,
+      "cumulative_reward": 1.0
+    },
+    "medium_001": {
+      "task_id": "medium_001",
+      "score": 0.983,
+      "grader_breakdown": {
+        "evidence_coverage": 1.0,
+        "reason_code_accuracy": 1.0,
+        "decision_correctness": 1.0,
+        "efficiency": 0.833,
+        "forbidden_penalty": 0.0
+      },
+      "trajectory": [
+        "inspect_change",
+        "inspect_change",
+        "inspect_change",
+        "inspect_dependencies",
+        "inspect_services:orders-service",
+        "inspect_services:search-service",
+        "search_incidents",
+        "check_policy",
+        "submit_decision:approve"
+      ],
+      "steps": 9,
+      "cumulative_reward": 1.04
+    },
+    "medium_002": {
+      "task_id": "medium_002",
+      "score": 0.942,
+      "grader_breakdown": {
+        "evidence_coverage": 1.0,
+        "reason_code_accuracy": 0.833,
+        "decision_correctness": 1.0,
+        "efficiency": 0.833,
+        "forbidden_penalty": 0.0
+      },
+      "trajectory": [
+        "inspect_change",
+        "inspect_change",
+        "inspect_change",
+        "inspect_dependencies",
+        "inspect_services:auth-service",
+        "inspect_services:api-gateway",
+        "search_incidents",
+        "check_policy",
+        "submit_decision:approve"
+      ],
+      "steps": 9,
+      "cumulative_reward": 1.12
+    }
+  },
+  "average_score": 0.848,
+  "num_tasks": 6
+}

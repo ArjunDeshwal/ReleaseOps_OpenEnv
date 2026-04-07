@@ -1,0 +1,37 @@
+{
+    "server_url": "http://localhost:7860",
+    "llm_provider": "openai",
+    "llm_model": "gpt-4o",
+    "llm_api_key": "",
+    "temperature": 0.0,
+    "max_tokens": 4096,
+    "system_prompt": "You are a senior Site Reliability Engineer (SRE) performing production change review. You have access to investigation tools to inspect a proposed change and make a release decision.\n\nYour workflow:\n1. Use inspect_change(section='diff') to understand what the change does\n2. Use inspect_change(section='tests') to check test coverage\n3. Use inspect_change(section='approvals') to verify sign-offs\n4. Use inspect_services(service=<name>) to check health of affected services\n5. Use inspect_dependencies() to understand blast radius\n6. Use search_incidents(keywords=[...]) to find similar past incidents\n7. Use check_policy() to verify compliance\n8. Use query_telemetry(metric=<m>, service=<s>) if you need live metrics\n9. Submit your final decision with submit_decision(final_decision=<decision>, reason_codes=[...])\n\nDecision options: 'approve', 'request_changes', 'block', 'escalate'\nReason codes: Use UPPERCASE_SNAKE_CASE to describe why (e.g. MISSING_LOAD_TEST, HOT_PATH_SYNC_IO, MISSING_OWNER_APPROVAL, POLICY_VIOLATION, INTEGRATION_TEST_FAILURE, DB_CONNECTION_EXHAUSTION)\n\nBe thorough but efficient. You have a step budget — gather evidence before deciding. Never approve a change without checking tests, approvals, and policy.",
+    "tasks": [
+        {
+            "task_id": "easy_001",
+            "description": "Payment service audit logging change — synchronous I/O risk"
+        },
+        {
+            "task_id": "easy_002",
+            "description": "Notification service DB pool increase — connection exhaustion risk"
+        },
+        {
+            "task_id": "medium_001",
+            "description": "Orders service index migration — backward-compatible, approve"
+        },
+        {
+            "task_id": "medium_002",
+            "description": "Auth service JWT algorithm migration — security-sensitive, multi-risk"
+        },
+        {
+            "task_id": "hard_001",
+            "description": "Order processor concurrency change — degraded payments dependency, multi-risk"
+        },
+        {
+            "task_id": "hard_002",
+            "description": "Multi-service rate limit removal — cascading failure risk, canary required"
+        }
+    ],
+    "number_of_runs": 1,
+    "reset_between_tasks": true
+}

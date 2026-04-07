@@ -1,0 +1,47 @@
+{
+  "services": {
+    "payment-service": {
+      "tier": "critical",
+      "owners": ["payments-team"],
+      "sla": "99.99%",
+      "current_health": "healthy",
+      "metrics": {
+        "p50_ms": 80,
+        "p95_ms": 200,
+        "p99_ms": 950,
+        "error_rate": 0.005,
+        "rps": 3000
+      }
+    },
+    "api-gateway": {
+      "tier": "critical",
+      "owners": ["platform-team"],
+      "sla": "99.95%",
+      "current_health": "healthy",
+      "metrics": {
+        "p50_ms": 12,
+        "p95_ms": 45,
+        "p99_ms": 120,
+        "error_rate": 0.001,
+        "rps": 15000
+      }
+    },
+    "audit-service": {
+      "tier": "standard",
+      "owners": ["compliance-team"],
+      "sla": "99.9%",
+      "current_health": "healthy",
+      "metrics": {
+        "p50_ms": 200,
+        "p95_ms": 800,
+        "p99_ms": 2000,
+        "error_rate": 0.01,
+        "rps": 500
+      }
+    }
+  },
+  "dependencies": {
+    "payment-service": ["audit-service"],
+    "api-gateway": ["payment-service"]
+  }
+}

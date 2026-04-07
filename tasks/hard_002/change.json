@@ -1,0 +1,47 @@
+{
+  "change_id": "PR-9987",
+  "author": "dev-marcus",
+  "description": "Remove per-user rate limiting from API gateway to improve developer experience",
+  "files_changed": [
+    "api-gateway/src/middleware/rate_limiter.py",
+    "api-gateway/config/rate_limit_config.yaml",
+    "api-gateway/tests/test_rate_limiter.py",
+    "api-gateway/src/handlers/request_handler.py"
+  ],
+  "services_touched": ["api-gateway"],
+  "blast_radius": ["api-gateway", "search-service", "catalog-service", "recommendations-engine", "database-cluster"],
+  "diff_summary": "Removes the per-user rate limit of 1000 req/min and the global burst cap of 50k req/s. Motivation: large enterprise customers complained rate limits blocked their integrations. No replacement throttling mechanism is introduced. Retry logic in client SDKs may cause thundering herd. Database cluster currently handling 78% of peak query capacity.",
+  "test_results": {
+    "unit": {
+      "passed": 28,
+      "failed": 0,
+      "skipped": 0
+    },
+    "integration": {
+      "passed": 15,
+      "failed": 0,
+      "skipped": 3
+    },
+    "load_test": null
+  },
+  "approvals": {
+    "code_review": "approved",
+    "service_owner": "pending",
+    "security_review": "pending"
+  },
+  "rollback_plan": "Re-enable rate_limit_config.yaml — feature flag controlled, instant rollback",
+  "hidden_risks": [
+    {
+      "risk_id": "database_overload",
+      "severity": "critical",
+      "summary": "Database at 78% capacity — unthrottled traffic spike will exceed limits",
+      "discoverable_via": ["inspect_dependencies", "inspect_services"]
+    },
+    {
+      "risk_id": "cascade_failure",
+      "severity": "critical",
+      "summary": "Removing rate limits without load testing risks cascading failures to downstream services",
+      "discoverable_via": ["inspect_dependencies", "search_incidents", "check_policy"]
+    }
+  ]
+}

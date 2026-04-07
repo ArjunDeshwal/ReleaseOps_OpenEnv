@@ -1,0 +1,29 @@
+spec_version: 1
+name: releaseops_env
+version: "1.0.0"
+description: "Production change review benchmark for SRE decision-making"
+type: space
+runtime: fastapi
+app: server.app:app
+port: 7860
+max_steps: 12
+
+tasks:
+  - id: easy_001
+    difficulty: easy
+    baseline_score: 0.983
+  - id: easy_002
+    difficulty: easy
+    baseline_score: 0.983
+  - id: medium_001
+    difficulty: medium
+    baseline_score: 0.983
+  - id: medium_002
+    difficulty: medium
+    baseline_score: 0.983
+  - id: hard_001
+    difficulty: hard
+    baseline_score: 0.773
+  - id: hard_002
+    difficulty: hard
+    baseline_score: 0.760

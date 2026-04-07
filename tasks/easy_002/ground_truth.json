@@ -1,0 +1,37 @@
+{
+  "optimal_decision": "request_changes",
+  "acceptable_decisions": ["request_changes", "block"],
+  "required_reason_codes": [
+    "db_connection_exhaustion",
+    "missing_capacity_check",
+    "missing_load_test",
+    "missing_approval_dba",
+    "policy_peak_traffic"
+  ],
+  "required_risk_signals": [
+    "db_connection_exhaustion",
+    "missing_capacity_check",
+    "missing_load_test",
+    "missing_approval_dba",
+    "policy_peak_traffic"
+  ],
+  "required_evidence": [
+    "inspected_diff",
+    "inspected_approvals",
+    "inspected_services",
+    "inspected_dependencies",
+    "checked_incidents",
+    "checked_policy"
+  ],
+  "acceptable_trajectories": [
+    "inspect_diff → inspect_approvals → inspect_services → inspect_dependencies → search_incidents → check_policy → submit_decision(request_changes)",
+    "inspect_diff → inspect_services → inspect_dependencies → inspect_approvals → check_policy → search_incidents → submit_decision(request_changes)"
+  ],
+  "forbidden_actions": [],
+  "max_steps": 12,
+  "difficulty": "easy",
+  "expected_score_range": {
+    "optimal_trajectory": [0.85, 0.95],
+    "weak_agent": [0.40, 0.65]
+  }
+}

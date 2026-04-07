@@ -1,0 +1,62 @@
+{
+  "services": {
+    "order-processor": {
+      "tier": "critical",
+      "owners": ["fulfillment-team"],
+      "sla": "99.95%",
+      "current_health": "healthy",
+      "metrics": {
+        "p50_ms": 180,
+        "p95_ms": 320,
+        "p99_ms": 350,
+        "error_rate": 0.003,
+        "rps": 2500
+      }
+    },
+    "queue-service": {
+      "tier": "critical",
+      "owners": ["platform-team"],
+      "sla": "99.99%",
+      "current_health": "healthy",
+      "metrics": {
+        "p50_ms": 8,
+        "p95_ms": 22,
+        "p99_ms": 45,
+        "error_rate": 0.001,
+        "rps": 8000,
+        "queue_depth": 1200
+      }
+    },
+    "rate-limiter": {
+      "tier": "high",
+      "owners": ["platform-team"],
+      "sla": "99.9%",
+      "current_health": "healthy",
+      "metrics": {
+        "p50_ms": 2,
+        "p95_ms": 8,
+        "p99_ms": 18,
+        "error_rate": 0.0005,
+        "rps": 12000
+      }
+    },
+    "payments-service": {
+      "tier": "critical",
+      "owners": ["payments-team"],
+      "sla": "99.99%",
+      "current_health": "degraded",
+      "metrics": {
+        "p50_ms": 320,
+        "p95_ms": 620,
+        "p99_ms": 980,
+        "error_rate": 0.018,
+        "rps": 3000
+      },
+      "degradation_note": "Under investigation since 2026-03-26 — suspected memory leak, P2 incident open"
+    }
+  },
+  "dependencies": {
+    "order-processor": ["queue-service", "payments-service"],
+    "rate-limiter": ["order-processor"]
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "rules": [
+    {
+      "id": "POL-1",
+      "rule": "DBA approval required for all schema changes to production databases"
+    },
+    {
+      "id": "POL-2",
+      "rule": "Rollback plan required for all schema changes"
+    },
+    {
+      "id": "POL-3",
+      "rule": "No deployments to critical-tier services during peak traffic window (14:00-18:00 UTC)"
+    }
+  ],
+  "current_time": "10:30 UTC",
+  "traffic_window": "off_peak"
+}
